@@ -12,6 +12,7 @@ var promoRouter = require('./routes/promoRouter.js');
 var leaderRouter = require('./routes/leaderRouter.js');
 
 const Dishes = require('./models/dishes.js');
+const Promos = require('./models/promotions.js');
 
 const url = 'mongodb://localhost:27017/conFusion';
 const connect = mongoose.connect(url);
