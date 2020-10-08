@@ -1,4 +1,4 @@
-const mongoose =  require('mongoose');
+const mongoose = require('mongoose');
 
 const Dishes = require('./models/dishes.js');
 
@@ -7,27 +7,42 @@ const connect = mongoose.connect(url);
 
 connect.then( (db) => {
     console.log('connected correctly to the database!');
-
-    var newDish = Dishes({
+    
+    Dishes.create({
         name: 'Uthappizza',
         description: 'test'
-    });
+    })
 
-    newDish.save()
-        .then( (dish) => {
-            console.log(dish);
+    .then((dish) => {
+        console.log("dish created:\n" , dish);
 
-            return Dishes.find({}).exec();
-        })
-        .then( (dishes) => {
-            console.log(dishes);
+        return Dishes.findByIdAndUpdate(dish._id, {
+            $set: { description: 'updated test' }
+        },{
+            new: true
+        }).exec();
+    })
+    .then((dish) => {
+        console.log('found all dishes:\n' , dish);
 
-            return Dishes.remove({});
-        })
-        .then( () => {
-            return mongoose.connection.close();
-        })
-        .catch( (err) => {
-            console.log(err);
+        dish.comments.push({
+            rating: 5,
+            comment: 'test comment',
+            author:'someone'
         });
+
+        return dish.save();
+    })
+    .then((dish) => {
+        console.log(dish);
+
+        return Dishes.remove({});
+    })
+    .then(() => {
+        console.log('all dishes deleted!')
+        return mongoose.connection.close();
+    })
+    .catch((err) => {
+        console.log(err);
+    });
 });
